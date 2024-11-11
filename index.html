@@ -18,16 +18,19 @@
     <main>
         <div class="container w-50">
             <!-- Numeri Casuali -->
-            <div>
-                <p id="random-numbs"></p>
+            <div class="mt-5">
+                <h1 id="random-numbs"></h1>
             </div>
             <!-- Timer 30 sec -->
             <div class="mt-5">
-                <h1 id="timer">0</h1>
-                <p>Inserisci tutti i numeri che ricordi (l'ordine non è importante)</p>
+                <h2 id="timer">30</h2>
             </div>
+            
             <!-- Input utente -->
-            <form class="row row-cols-5 gx-5 justify-content-center align-items-center">
+            <form  id="form-user" class="row justify-content-center align-items-center d-none">
+                <div class="col-12">
+                    <p>Inserisci tutti i numeri che ricordi (l'ordine non è importante)</p>
+                </div>
 
                 <div class="col">
                     <label class="visually-hidden" for="number-1"></label>
