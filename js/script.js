@@ -1,46 +1,97 @@
-const formElem = document.getElementById("form-user")
-const timerElem = document.getElementById("timer");
-const inputsElem = document.querySelectorAll("input");
-const btnElem = document.querySelector("submit");
-const randomNums = document.getElementById("random-numbs")
-const resultElem = document.getElementById("result")
-
-
-// Calcolo 5 numeri casuali
-
-const randomNumbers = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-randomNums.innerHTML = randomNumbers(10000, 99999);
-
-//  Conto alla rovescia di 30 secondi
-let counter = 30;
-const timercount = setInterval(function () {
-    console.log(counter);
-    counter--;
-    timerElem.innerHTML = counter;
-    if (counter === 0) {
-        randomNums.classList.add("d-none");
-        formElem.classList.remove("d-none");
-        clearInterval(timercount);
+// Funzioni di appoggio
+const getRandomInt = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1) + min);
+  
+  const getRandomNumbersArray = (min, max, length) => {
+    const numsArray = [];
+    for (let i = 0; i < length; i++) {
+      const randomNum = getRandomInt(min, max);
+      numsArray.push(randomNum);
     }
-}, 1000);
-
-// All'invio del bottone conferma
-formElem.addEventListener("submit", function (event) {
+    return numsArray;
+  };
+  
+  ///////////////////////
+  // Elementi html
+  //////////////////////
+  const startBtn = document.getElementById("start-btn");
+  const numbersListElem = document.getElementById("numbers-list");
+  const countdownElem = document.getElementById("countdown");
+  const formElem = document.getElementById("answers-form");
+  const inputsList = document.querySelectorAll("input");
+  const messageElem = document.getElementById("message");
+  
+  ///////////////////////
+  // Variabili globali
+  //////////////////////
+  let numbersArray = [];
+  
+  const clearGame = () => {
+    messageElem.innerHTML = "";
+    formElem.classList.add("d-none");
+    formElem.reset();
+  };
+  
+  const printNumbers = (numbersToShow) => {
+    // Mostro i numeriu random
+    for (let i = 0; i < numbersToShow.length; i++) {
+      const curNumber = numbersToShow[i];
+      numbersListElem.innerHTML += `<li>${curNumber}</li>`;
+    }
+  };
+  
+  const showForm = () => {
+    numbersListElem.innerHTML = "";
+    countdownElem.innerHTML = "";
+    formElem.classList.remove("d-none");
+    startBtn.disabled = false;
+  }
+  
+  const startTimer = (start, end) => {
+    let counter = start;
+    const intervalId = setInterval(() => {
+      if (counter >= end) {
+        countdownElem.innerHTML = counter--;
+      } else {
+        clearInterval(intervalId);
+        showForm();
+      }
+    }, 1000);
+  };
+  
+  const startGame = () => {
+    clearGame();
+    startBtn.disabled = true;
+    numbersArray = getRandomNumbersArray(1, 100, 5);
+    console.log(numbersArray);
+    printNumbers(numbersArray);
+    // Faccio partire il timer
+    startTimer(30, 0);
+  };
+  
+  const handleFormSubmit = (event) => {
     event.preventDefault();
-
-        let inputNumbs= [];
-    for (let i = 0; i < inputsElem.length; i++) {
-        const curInput = inputsElem[i];
-        console.log(curInput.value);
-
-        if (curInput.value.includes(randomNums)) {
-            inputNumbs.push(curInput.value)
-            resultElem.innerHTML = ("hai indovinato questi numeri:" + inputNumbs)
-
-        } else {
-            resultElem.innerHTML = ("Non hai indovinato nessun numero")
-        }
-
+    console.log("submit");
+    const insertedNumbers = [];
+    for (let i = 0; i < inputsList.length; i++) {
+      const curInput = inputsList[i];
+      insertedNumbers.push(parseInt(curInput.value));
     }
-
-});
+    console.log(insertedNumbers);
+  
+    const correctNumbers = [];
+    for (let i = 0; i < insertedNumbers.length; i++) {
+      const curNumber = insertedNumbers[i];
+      if (numbersArray.includes(curNumber)) {
+        correctNumbers.push(curNumber);
+      }
+    }
+    console.log(correctNumbers);
+  
+    messageElem.innerHTML = `Hai indovinato ${
+      correctNumbers.length
+    } numeri: ${correctNumbers.join(",")}`;
+  };
+  
+  startBtn.addEventListener("click", startGame);
+  formElem.addEventListener("submit", handleFormSubmit);
